@@ -1,0 +1,5 @@
+```
+    cd spike/rust
+    chmod +x run.sh
+    ./run.sh 
+```
