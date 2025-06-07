@@ -22,7 +22,7 @@ for file in "$BIN_DIR"/*.rs; do
 
     echo "=== $BIN_NAME ===" | tee -a output.log
     cargo build --release --bin "$BIN_NAME"
-    /home/orangepi/linux-6.6.63/tools/perf/perf stat ../../target/release/"$BIN_NAME" >> output.log 2>&1
+    /home/orangepi/linux-6.6.63/tools/perf/perf stat ../target/release/"$BIN_NAME" >> output.log 2>&1
 
     echo ""
 done
