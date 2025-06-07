@@ -76,7 +76,7 @@ ark-ec = { version = "0.5", default-features = false }
 ark-ff = { version = "0.5", default-features = false }
 ark-serialize = { version = "0.5", default-features = false }
 aurora-engine-modexp = { version = "1.1", default-features = false }
-blst = { path = "blst/bindings/rust" }
+blst = "0.3.15"
 bn = { package = "substrate-bn", version = "0.6", default-features = false }
 c-kzg = { version = "2.1.1", default-features = false }
 k256 = { version = "0.13.3", default-features = false }
@@ -167,3 +167,6 @@ inherits = "profiling"
 [profile.ethtests]
 inherits = "test"
 opt-level = 3
+
+[patch.crates-io]
+blst = { path = "blst/bindings/rust" }
