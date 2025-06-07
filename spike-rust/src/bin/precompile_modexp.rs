@@ -21,7 +21,7 @@ fn main() {
             9f59294a00f05155c23e97dac6b3a00b0c63c8411bf815fc183b420b4d9dc5f7\
             15040d5c60957f52d334b843197adec58c131c907cd96059fc5adce9dda351b5\
             df3d666fcf3eb63c46851c1816e323f2119ebdf5ef35";
-    let input = hex::decode(input_str).unwrap().into();
+    let input = hex::decode(input_str).unwrap();
 
     let count = 2_000_000;
     println!("Unit Count = {}", count);
