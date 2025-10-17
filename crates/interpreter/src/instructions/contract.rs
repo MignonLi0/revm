@@ -94,12 +94,18 @@ pub fn create<WIRE: InterpreterTypes, const IS_CREATE2: bool, H: Host + ?Sized>(
         .spec_id()
         .is_enabled_in(SpecId::TANGERINE)
     {
+        println!("  - available gas for create: {}", gas_limit);
+
         // Take remaining gas and deduce l64 part of it.
         gas_limit -= gas_limit / 64
     }
-    println!("  - available gas for create: {}", gas_limit);
+    println!("  - available gas for1 create: {}", gas_limit);
 
     gas!(context.interpreter, gas_limit);
+    println!(
+        "  - available gas for create: {}",
+        context.interpreter.gas.remaining()
+    );
 
     // Call host to interact with target contract
     context
