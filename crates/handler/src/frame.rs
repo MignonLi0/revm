@@ -462,9 +462,17 @@ impl EthFrame<EthInterpreter> {
                 // Safe to push without stack limit check
                 let _ = interpreter.stack.push(item);
 
+                println!(
+                    "  1- available gas after call: {}",
+                    interpreter.gas.remaining()
+                );
                 // Return unspend gas.
                 if ins_result.is_ok_or_revert() {
                     interpreter.gas.erase_cost(out_gas.remaining());
+                    println!(
+                        " 2 - available gas after erasing cost: {}",
+                        interpreter.gas.remaining()
+                    );
                     interpreter
                         .memory
                         .set(mem_start, &interpreter.return_data.buffer()[..target_len]);
@@ -495,8 +503,13 @@ impl EthFrame<EthInterpreter> {
                 );
 
                 let this_gas = &mut interpreter.gas;
+                println!("  - 4available gas after create: {}", this_gas.remaining());
                 if instruction_result.is_ok_or_revert() {
                     this_gas.erase_cost(outcome.gas().remaining());
+                    println!(
+                        "  - 5available gas after erasing cost: {}",
+                        this_gas.remaining()
+                    );
                 }
 
                 let stack_item = if instruction_result.is_ok() {

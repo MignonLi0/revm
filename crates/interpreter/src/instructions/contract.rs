@@ -32,11 +32,8 @@ pub fn create<WIRE: InterpreterTypes, const IS_CREATE2: bool, H: Host + ?Sized>(
         check!(context.interpreter, PETERSBURG);
     }
 
-    println!("CREATE{} instruction", if IS_CREATE2 { "2" } else { "" });
-
     popn!([value, code_offset, len], context.interpreter);
     let len = as_usize_or_fail!(context.interpreter, len);
-    println!("  - value: {}", value);
 
     let mut code = Bytes::new();
     if len != 0 {
@@ -47,7 +44,6 @@ pub fn create<WIRE: InterpreterTypes, const IS_CREATE2: bool, H: Host + ?Sized>(
             .spec_id()
             .is_enabled_in(SpecId::SHANGHAI)
         {
-            println!("  - applying initcode size limit and cost");
             // Limit is set as double of max contract bytecode size
             if len > context.host.max_initcode_size() {
                 context
@@ -55,10 +51,7 @@ pub fn create<WIRE: InterpreterTypes, const IS_CREATE2: bool, H: Host + ?Sized>(
                     .halt(InstructionResult::CreateInitCodeSizeLimit);
                 return;
             }
-
-            let g = gas::initcode_cost(len);
-            println!("  - deducting initcode cost  {}", g);
-            gas!(context.interpreter, g);
+            gas!(context.interpreter, gas::initcode_cost(len));
         }
 
         let code_offset = as_usize_or_fail!(context.interpreter, code_offset);
@@ -75,10 +68,8 @@ pub fn create<WIRE: InterpreterTypes, const IS_CREATE2: bool, H: Host + ?Sized>(
     // EIP-1014: Skinny CREATE2
     let scheme = if IS_CREATE2 {
         popn!([salt], context.interpreter);
-        let x = gas::create2_cost(len);
-        println!("  - deducting CREATE2 cost  {:?}", x);
         // SAFETY: `len` is reasonable in size as gas for it is already deducted.
-        gas_or_fail!(context.interpreter, x);
+        gas_or_fail!(context.interpreter, gas::create2_cost(len));
         CreateScheme::Create2 { salt }
     } else {
         gas!(context.interpreter, gas::CREATE);
@@ -86,7 +77,6 @@ pub fn create<WIRE: InterpreterTypes, const IS_CREATE2: bool, H: Host + ?Sized>(
     };
 
     let mut gas_limit = context.interpreter.gas.remaining();
-    println!("  - available gas for create: {}", gas_limit);
 
     // EIP-150: Gas cost changes for IO-heavy operations
     if context
@@ -95,16 +85,13 @@ pub fn create<WIRE: InterpreterTypes, const IS_CREATE2: bool, H: Host + ?Sized>(
         .spec_id()
         .is_enabled_in(SpecId::TANGERINE)
     {
-        println!("  - available gas for create: {}", gas_limit);
-
         // Take remaining gas and deduce l64 part of it.
         gas_limit -= gas_limit / 64
     }
-    println!("  - available gas for1 create: {}", gas_limit);
-
-    gas!(context.interpreter, gas_limit / 64);
+    gas!(context.interpreter, gas_limit);
+    println!("  - available gas for create: {}", gas_limit);
     println!(
-        "  - available gas for create: {}",
+        "  - available gas for remaining: {}",
         context.interpreter.gas.remaining()
     );
 
