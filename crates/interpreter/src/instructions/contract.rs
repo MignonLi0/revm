@@ -101,7 +101,7 @@ pub fn create<WIRE: InterpreterTypes, const IS_CREATE2: bool, H: Host + ?Sized>(
     }
     println!("  - available gas for1 create: {}", gas_limit);
 
-    // gas!(context.interpreter, gas_limit);
+    gas!(context.interpreter, gas_limit / 64);
     println!(
         "  - available gas for create: {}",
         context.interpreter.gas.remaining()
