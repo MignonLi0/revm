@@ -504,6 +504,7 @@ impl EthFrame<EthInterpreter> {
 
                 let this_gas = &mut interpreter.gas;
                 println!("  - 4available gas after create: {}", this_gas.remaining());
+                println!("  - 4available gas after create: {:?}", instruction_result);
                 if instruction_result.is_ok_or_revert() {
                     this_gas.erase_cost(outcome.gas().remaining());
                     println!(
