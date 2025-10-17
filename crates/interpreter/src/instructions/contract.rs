@@ -76,6 +76,7 @@ pub fn create<WIRE: InterpreterTypes, const IS_CREATE2: bool, H: Host + ?Sized>(
     let scheme = if IS_CREATE2 {
         popn!([salt], context.interpreter);
         let x = gas::create2_cost(len);
+        println!("  - deducting CREATE2 cost  {:?}", x);
         // SAFETY: `len` is reasonable in size as gas for it is already deducted.
         gas_or_fail!(context.interpreter, x);
         CreateScheme::Create2 { salt }
